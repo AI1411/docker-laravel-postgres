@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  # Server container
+  nginx:
+    build:
+      context: docker/dev/nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/www
+      - ./docker/dev/nginx/logs:/var/log/nginx
+    ports:
+      # Laravel port
+      - 8081:81
+    links:
+      - php
+
+  php:
+    build:
+      context: docker/dev/php
+      dockerfile: Dockerfile
+    volumes:
+      - ./php:/var/www/php
+    links:
+      - postgres
+
+  postgres:
+    build:
+      context: docker/dev/postgres
+      dockerfile: Dockerfile
+    volumes:
+      # Database volume
+      - database:/var/lib/postgresql/data
+      # Temp volume to allow using dumps
+      - ./docker/dev/postgres/dumps/:/tmp/
+    ports:
+      - 54321:5432
+    environment:
+      - LC_ALL=C.UTF-8
+      - POSTGRES_DB=app
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=app
+
+volumes:
+  database:
+    driver: local
