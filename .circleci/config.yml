@@ -1,0 +1,7 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: laravel-postgres/php:7.4-fpm
+    steps:
+      - run: echo "Hello World"
